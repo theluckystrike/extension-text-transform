@@ -1,0 +1,37 @@
+{
+    "name": "extension-text-transform",
+    "version": "0.1.0",
+    "description": "Text transformation for Chrome extensions — find/replace, regex, case conversion, and text stats on page content for MV3.",
+    "author": "Zovo <hello@zovo.one>",
+    "license": "MIT",
+    "keywords": [
+        "chrome-extension",
+        "text",
+        "transform",
+        "replace",
+        "regex",
+        "case",
+        "manifest-v3",
+        "browser-extension",
+        "content-script"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/theluckystrike/extension-text-transform.git"
+    },
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "prepublishOnly": "npm run build"
+    },
+    "devDependencies": {
+        "@types/chrome": "^0.0.260",
+        "typescript": "^5.3.3"
+    }
+}
