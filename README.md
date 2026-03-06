@@ -1,110 +1,111 @@
-# extension-text-transform — Text Transformation Utilities
+# extension-text-transform
 
-[![npm](https://img.shields.io/npm/v/extension-text-transform.svg)](https://www.npmjs.com/package/extension-text-transform)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![Zero Dependencies](https://img.shields.io/badge/dependencies-0-green.svg)]()
 
-> **Built by [Zovo](https://zovo.one)** — text utilities across 18+ Chrome extensions
+A TypeScript library for Chrome extensions (Manifest V3) that performs find-and-replace, regex replacement, case conversion, and text statistics on live page content. Zero runtime dependencies. Works directly with the DOM using TreeWalker for efficient text node traversal.
 
-**Case conversion, slugification, trimming, and encoding** utilities for Chrome extensions. Zero runtime dependencies.
-
-## 📦 Install
+INSTALL
 
 ```bash
 npm install extension-text-transform
 ```
 
-## 🚀 Quick Start
+USAGE
+
+Import the TextTransform class and call its static methods from a content script or extension page.
 
 ```typescript
-import { 
-    camelCase, snakeCase, kebabCase, 
-    slugify, trim, truncate,
-    encodeHTML, decodeHTML 
-} from 'extension-text-transform';
-
-// Case conversion
-camelCase('hello world');     // 'helloWorld'
-snakeCase('hello world');     // 'hello_world'
-kebabCase('hello world');     // 'hello-world'
-
-// Slugify
-slugify('Hello World! 2024'); // 'hello-world-2024'
-
-// Truncate
-truncate('Hello World', 8);   // 'Hello W...'
-
-// HTML encoding
-encodeHTML('<div>"test"</div>'); // '&lt;div&gt;&quot;test&quot;&lt;/div&gt;'
+import { TextTransform } from 'extension-text-transform';
 ```
 
-## ✨ Features
+FIND AND REPLACE
 
-### Case Conversion
+Replace all occurrences of a string in visible page text. Returns the number of text nodes modified. Case insensitive by default.
 
 ```typescript
-import { camelCase, snakeCase, kebabCase, pascalCase, constantCase } from 'extension-text-transform';
-
-camelCase('hello world');     // 'helloWorld'
-pascalCase('hello world');    // 'HelloWorld'
-snakeCase('hello world');     // 'hello_world'
-kebabCase('hello world');     // 'hello-world'
-constantCase('hello world');  // 'HELLO_WORLD'
+const nodesChanged = TextTransform.findAndReplace('old text', 'new text');
+const nodesChanged = TextTransform.findAndReplace('old text', 'new text', true); // case sensitive
 ```
 
-### Text Processing
+REGEX REPLACE
+
+Replace text using a regular expression pattern. Accepts standard RegExp flags. Defaults to global case-insensitive matching.
 
 ```typescript
-import { slugify, truncate, trim, stripTags } from 'extension-text-transform';
-
-slugify('Hello World! 2024');       // 'hello-world-2024'
-truncate('Hello World', 8);          // 'Hello W...'
-trim('  hello  ');                   // 'hello'
-stripTags('<p>Hello</p>');           // 'Hello'
+const nodesChanged = TextTransform.regexReplace('\\d{4}', '****');
+const nodesChanged = TextTransform.regexReplace('hello', 'goodbye', 'g'); // custom flags
 ```
 
-### Encoding/Decoding
+CASE CONVERSION
+
+Convert the current text selection to upper, lower, title, or sentence case. If nothing is selected, nothing happens.
 
 ```typescript
-import { encodeHTML, decodeHTML, encodeURI, decodeURI } from 'extension-text-transform';
-
-encodeHTML('<div>"test"</div>');     // '&lt;div&gt;&quot;test&quot;&lt;/div&gt;'
-decodeHTML('&lt;div&gt;');            // '<div>'
-encodeURI('hello world');             // 'hello%20world'
+TextTransform.convertCase('upper');
+TextTransform.convertCase('lower');
+TextTransform.convertCase('title');
+TextTransform.convertCase('sentence');
 ```
 
-### Number Formatting
+TEXT STATISTICS
+
+Get character count, word count, sentence count, paragraph count, and estimated reading time for the entire page.
 
 ```typescript
-import { formatNumber, ordinal, abbreviate } from 'extension-text-transform';
-
-formatNumber(1234567);    // '1,234,567'
-ordinal(21);             // '21st'
-abbreviate(1500);        // '1.5k'
+const stats = TextTransform.getStats();
+// { characters: 12345, words: 2100, sentences: 98, paragraphs: 24, readingTime: '11 min' }
 ```
 
-## API Reference
+COUNT OCCURRENCES
 
-### Case Functions
+Count how many times a string appears in the page text. Case insensitive by default.
 
-| Function | Input | Output |
-|----------|-------|--------|
-| `camelCase` | `'hello world'` | `'helloWorld'` |
-| `pascalCase` | `'hello world'` | `'HelloWorld'` |
-| `snakeCase` | `'hello world'` | `'hello_world'` |
-| `kebabCase` | `'hello world'` | `'hello-world'` |
-| `constantCase` | `'hello world'` | `'HELLO_WORLD'` |
+```typescript
+const hits = TextTransform.count('search term');
+const hits = TextTransform.count('search term', true); // case sensitive
+```
 
-### Text Functions
+API REFERENCE
 
-| Function | Description |
-|----------|-------------|
-| `slugify(text)` | URL-safe slug |
-| `truncate(text, len)` | Truncate with ellipsis |
-| `trim(text)` | Remove whitespace |
-| `stripTags(text)` | Remove HTML tags |
+TextTransform.findAndReplace(find, replace, caseSensitive?)
+- find (string) the text to search for
+- replace (string) the replacement text
+- caseSensitive (boolean, default false) whether matching is case sensitive
+- Returns number of text nodes modified
 
-## 📄 License
+TextTransform.regexReplace(pattern, replacement, flags?)
+- pattern (string) a regular expression pattern
+- replacement (string) the replacement string
+- flags (string, default 'gi') RegExp flags
+- Returns number of text nodes modified
 
-MIT — [Zovo](https://zovo.one)
+TextTransform.convertCase(mode)
+- mode ('upper' | 'lower' | 'title' | 'sentence') the target case
+- Operates on the current text selection via execCommand
+
+TextTransform.getStats()
+- Returns { characters, words, sentences, paragraphs, readingTime }
+
+TextTransform.count(search, caseSensitive?)
+- search (string) the text to count
+- caseSensitive (boolean, default false) whether matching is case sensitive
+- Returns number of occurrences
+
+BUILD
+
+```bash
+npm install
+npm run build
+```
+
+Output goes to dist/ with type declarations and source maps.
+
+LICENSE
+
+MIT. See LICENSE file for details.
+
+---
+
+Built by theluckystrike. More projects at zovo.one.
